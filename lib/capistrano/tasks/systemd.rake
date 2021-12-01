@@ -208,6 +208,9 @@ namespace :sidekiq do
       else
         [:systemctl, '--user']
       end
+    if args[0] == :start
+      execute_array.push('--no-block')
+    end
     if process
       execute_array.push(
         *args, sidekiq_service_unit_name(process: process)

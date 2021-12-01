@@ -80,9 +80,11 @@ namespace :sidekiq do
         if git_plugin.config_per_process?
           git_plugin.process_block do |process|
             git_plugin.create_systemd_config_symlink(process)
+            git_plugin.systemctl_command(:enable, process: process)
           end
+        else
+          git_plugin.systemctl_command(:enable)
         end
-        git_plugin.systemctl_command(:enable)
 
         if fetch(:sidekiq_service_unit_user) != :system && fetch(:sidekiq_enable_lingering)
           execute :loginctl, "enable-linger", fetch(:sidekiq_lingering_user)
@@ -201,7 +203,6 @@ namespace :sidekiq do
       else
         [:systemctl, '--user']
       end
-
     if process
       execute_array.push(
         *args, sidekiq_service_unit_name(process: process)

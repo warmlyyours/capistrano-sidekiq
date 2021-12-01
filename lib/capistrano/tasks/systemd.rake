@@ -24,8 +24,8 @@ namespace :sidekiq do
   task :restart do
     on roles fetch(:sidekiq_roles) do |role|
       git_plugin.switch_user(role) do
-        git_plugin.quiet_sidekiq
         git_plugin.process_block do |process|
+          git_plugin.quiet_sidekiq(process: process)
           start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
           running = nil
 
@@ -69,7 +69,9 @@ namespace :sidekiq do
   task :quiet do
     on roles fetch(:sidekiq_roles) do |role|
       git_plugin.switch_user(role) do
-        git_plugin.quiet_sidekiq
+        git_plugin.process_block do |process|
+          git_plugin.quiet_sidekiq(process: process)
+        end
       end
     end
   end
@@ -222,10 +224,8 @@ namespace :sidekiq do
     end
   end
 
-  def quiet_sidekiq
-    git_plugin.process_block do |process|
-      systemctl_command(:kill, '-s', :TSTP, process: process)
-    end
+  def quiet_sidekiq(process: process)
+    systemctl_command(:kill, '-s', :TSTP, process: process)
   end
 
   def switch_user(role)

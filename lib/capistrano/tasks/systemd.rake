@@ -224,8 +224,8 @@ namespace :sidekiq do
     end
   end
 
-  def quiet_sidekiq(process: process)
-    systemctl_command(:kill, '-s', :TSTP, process: process)
+  def quiet_sidekiq(process: p)
+    systemctl_command(:kill, '-s', :TSTP, process: p)
   end
 
   def switch_user(role)

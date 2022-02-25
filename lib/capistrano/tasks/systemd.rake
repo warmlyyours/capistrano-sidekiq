@@ -1,5 +1,4 @@
 git_plugin = self
-
 namespace :sidekiq do
 
   standard_actions = {
@@ -224,8 +223,8 @@ namespace :sidekiq do
     end
   end
 
-  def quiet_sidekiq(process: p)
-    systemctl_command(:kill, '-s', :TSTP, process: p)
+  def quiet_sidekiq(process: nil)
+    systemctl_command(:kill, '-s', :TSTP, process: process)
   end
 
   def switch_user(role)
